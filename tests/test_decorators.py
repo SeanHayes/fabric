@@ -51,7 +51,7 @@ def test_runs_once_returns_same_value_each_run():
         eq_(task(), return_value)
 
 
-class TestRunOnRemote(FabricTest):
+class TestRunsOnRemote(FabricTest):
     """
     Tests for the @run_on_remote decorator.
     """
@@ -65,7 +65,7 @@ class TestRunOnRemote(FabricTest):
             func = fake_function(callable=True).times_called(0).returns('local')
             #test server doesn't handle the ch context manager used in
             #run_on_remote unless it's an empty string
-            task = decorators.run_on_remote(remote_fabfile_path='')(func)
+            task = decorators.runs_on_remote(remote_fabfile_path='')(func)
             ret = task()
             assert ret == 'remote'
     
@@ -77,7 +77,7 @@ class TestRunOnRemote(FabricTest):
         """
         with settings(hosts=[]):
             func = fake_function(callable=True, expect_call=True).times_called(1).returns('local')
-            task = decorators.run_on_remote()(func)
+            task = decorators.runs_on_remote()(func)
             ret = task()
             assert ret == 'local'
 

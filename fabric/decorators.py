@@ -106,7 +106,7 @@ def runs_once(func):
     return decorated
 
 
-def run_on_remote(is_local=False, remote_fabfile_path=None, *args, **kwargs):
+def runs_on_remote(is_local=False, remote_fabfile_path=None, *args, **kwargs):
     """
     Decorator that runs a function on a remote machine which has a copy of your
     fabfile.
@@ -119,7 +119,7 @@ env.hosts = []
 def remote():
     env.hosts = ['your_host']
 
-@run_on_remote(remote_fabfile_path='/path/to/fabfile/dir/')
+@runs_on_remote(remote_fabfile_path='/path/to/fabfile/dir/')
 def foo():
     print local('ls /')
 
