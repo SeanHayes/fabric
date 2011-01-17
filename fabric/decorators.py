@@ -4,7 +4,11 @@ Convenience decorators for use in fabfiles.
 
 from functools import wraps
 from types import StringTypes
-
+from fabric.operations import run, sudo
+from fabric.state import env
+from fabric.context_managers import cd
+import os
+import pdb
 
 def hosts(*host_list):
     """
@@ -100,3 +104,37 @@ def runs_once(func):
             decorated.return_value = func(*args, **kwargs)
         return decorated.return_value
     return decorated
+
+
+def run_on_remote(is_local=False, remote_fabfile_path=None, *args, **kwargs):
+    """
+    Decorator that runs a function on a remote machine
+    
+    Given the following fabfile:
+    
+    
+    """
+    def decorator(func):
+        @wraps(func)
+        def inner_decorator(*args, **kwargs):
+            is_loc = is_local
+            path = remote_fabfile_path
+            
+            #if fab function is being executed locally, proceed with execution
+            if len(env.hosts) == 0 or is_loc:
+                return func(*args, **kwargs)
+            #else, execute this fab function remotely using the remote machine copy of the fabfile
+            else:
+                cmd = 'fab %s' % func.__name__
+                #pdb.set_trace()
+                
+                if path is None:
+                    path = os.getcwd()
+                
+                with cd(path):
+                    ret = run(cmd)
+                #pdb.set_trace()
+                return ret
+        
+        return inner_decorator
+    return decorator
