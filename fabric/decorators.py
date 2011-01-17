@@ -108,11 +108,27 @@ def runs_once(func):
 
 def run_on_remote(is_local=False, remote_fabfile_path=None, *args, **kwargs):
     """
-    Decorator that runs a function on a remote machine
+    Decorator that runs a function on a remote machine which has a copy of your
+    fabfile.
     
     Given the following fabfile:
+from fabric.api import *
+
+env.hosts = []
+
+def remote():
+    env.hosts = ['your_host']
+
+@run_on_remote(remote_fabfile_path='/path/to/fabfile/dir/')
+def foo():
+    print local('ls /')
+
+    If you run `fab remote foo` on your local machine, fabric will run `fab foo`
+    on your remote machine.
     
-    
+    This functionality is useful for when you need to use Python's os and os.path
+    libraries on your remote machine, or if you need to import a Django settings.py
+    file on your remote machine.
     """
     def decorator(func):
         @wraps(func)
